@@ -1,0 +1,30 @@
+body { margin: 0; opacity: 0;}
+
+#container {
+    position: absolute;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+    color:#d2d2d2;
+}
+
+#tweet {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#lowerthird {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    overflow: hidden;
+    font-family: 'Open Sans', sans-serif;
+}
+.ncg-btn-group {
+  display:flex;
+  flex-direction: row;
+}

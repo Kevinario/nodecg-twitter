@@ -1,0 +1,48 @@
+{
+  "name": "nodecg-twitter",
+  "version": "0.0.0",
+  "description": "A NodeCG bundle to display Tweets",
+  "dependencies": {
+    "numeral": "^1.5.3",
+    "q": "^1.4.1",
+    "request": "^2.61.0",
+    "twitter": "^1.2.5"
+  },
+  "homepage": "http://auzom.tv/",
+  "author": {
+    "name": "Kevin van der Staaij",
+    "email": "Kevin.vanderstaaij@gmail.com"
+  },
+  "files": [
+    "dashboard",
+    "graphics",
+    "extension.js",
+    "extension"
+  ],
+  "keywords": [
+    "nodecg",
+    "nodecg-bundle",
+    "twitter"
+  ],
+  "nodecg": {
+    "compatibleRange": "~0.8.0",
+    "dashboardPanels": [
+      {
+        "name": "nodecg-twitter",
+        "title": "Twitter",
+        "width": 4,
+        "file": "nodecg-twitter.html",
+        "headerColor": "#55acee"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "index.html",
+        "width": 1920,
+        "height": 1080
+      }
+    ]
+  },
+  "repository": "https://github.com/nodecg/nodecg.git",
+  "license": "MIT"
+}
