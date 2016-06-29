@@ -11,7 +11,7 @@ This is a [NodeCG](http://github.com/nodecg/nodecg) bundle. It cannot be run on 
 ## Installation
 1. Install NodeCG (don't forget to run `npm install` from your the root of your NodeCG installation directory after you have installed it! This is what installs all of NodeCG's dependencies, which are required.)
 
-2. Clone nodecg-twitter to `nodecg/bundles/ss-twitter`
+2. Clone nodecg-twitter to `nodecg/bundles/nodecg-twitter`
 
 3. Create `nodecg/cfg/nodecg-twitter.json`. These are the necessary config files.
 
