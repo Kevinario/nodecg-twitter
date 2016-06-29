@@ -28,18 +28,6 @@ If you don't have Twitter credentials, you must make them before attempting to u
 }
 ```
 
-For sounds to play, you must also put the following code into `nodecg/cfg/lfg-sounds.json`.
-```
-{
-  "soundNames":[
-    "ss-twitter-image_in",
-    "ss-twitter-image_out",
-    "ss-twitter-tweet_in",
-    "ss-twitter-tweet_out"
-  ]
-}
-```
-
 ## Credits
 - [Alex "Lange" Van Camp](http://alexvan.camp/) - Original creator of the code
 - [David Thomas](http://synth3.tk) - Creator of the twitter bundle for v7.
