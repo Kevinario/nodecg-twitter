@@ -4,7 +4,10 @@
     "autosize": "~3.0.6",
     "gsap": "~1.16.1",
     "iron-image": "PolymerElements/iron-image#~1.2.2",
+    "paper-button": "PolymerElements/paper-button#^1.0.12",
+    "paper-input": "PolymerElements/paper-input#^1.1.11",
     "jquery": "~2.1.4",
+    "moment": "^2.13.0",
     "numeral": "~1.5.3"
   }
 }

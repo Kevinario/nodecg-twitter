@@ -72,7 +72,7 @@
         #line {
             align-self: center;
             height: 4px;
-            background-color: #a28944;
+            background-color: #F47425;
             width: 0;
             transform-origin: center;
             z-index: 1;
@@ -83,7 +83,7 @@
         }
 
         .link.orange {
-            color: #a28944;
+            color: #F47425;
         }
 
         s {
@@ -122,167 +122,157 @@
 // rely on GSAP being loaded.
 document.addEventListener('DOMContentLoaded', function () {
 
-    Polymer({
-        is: 'nodecg-tweet',
+  const tweet = nodecg.Replicant('tweet');
+  const tweetShowing = nodecg.Replicant('tweetShowing');
 
-        properties: {
-            tl: {
-                type: Object,
-                value: new TimelineLite({autoRemoveChildren: true}),
-                readOnly: true
-            },
-            imagesTl: {
-                type: Object,
-                value: new TimelineMax(),
-                readOnly: true
-            },
-            images: {
-                type: Object,
-                value: function() { return []; },
-                observer: 'imagesChanged'
-            },
-            _initialized: {
-                type: Boolean,
-                value: false
-            }
-        },
+  Polymer({
+		is: 'nodecg-tweet',
 
-        imagesChanged: function() {
-            var self = this;
+		properties: {
+			tl: {
+				type: Object,
+				value: new TimelineLite({autoRemoveChildren: true}),
+				readOnly: true
+			},
+			imagesTl: {
+				type: Object,
+				value: new TimelineMax(),
+				readOnly: true
+			},
+			images: {
+				type: Object,
+				value() {
+					return [];
+				},
+				observer: 'imagesChanged'
+			},
+			_showing: {
+				type: Boolean,
+				value: false
+			},
+			_initialized: {
+				type: Boolean,
+				value: false
+			}
+		},
 
-            this.imagesTl.clear();
+		imagesChanged() {
+			const self = this;
 
-            if (this.images.length === 0) {
-                self.imagesTl.to(self.$.image, 0.5, {opacity: 0, ease: Power1.easeInOut});
-                self.imagesTl.call(function() {
-                    self.$.image.src = '';
-                }, null, null);
-                return;
-            }
-            else if (this.images.length === 1) {
-                this.imagesTl.repeat(0);
-            } else {
-                this.imagesTl.repeat(-1);
-            }
+			this.imagesTl.clear();
 
-            this.images.forEach(function(url, i) {
-                self.imagesTl.to(self.$.image, 0.5, {opacity: 0, ease: Power1.easeInOut}, '+=' + (i * 7));
-                self.imagesTl.call(function() {
-                    self.$.image.src = '';
-                    self.$.image.src = url;
-                }, null, null);
-                self.imagesTl.to(self.$.image, 0.5, {opacity: 1, ease: Power1.easeInOut});
-            });
+			if (this.images.length === 0) {
+				self.imagesTl.to(self.$.image, 0.5, {
+					opacity: 0,
+					ease: Power1.easeInOut
+				});
+				self.imagesTl.call(() => {
+					self.$.image.src = '';
+				}, null, null);
+				return;
+			} else if (this.images.length === 1) {
+				this.imagesTl.repeat(0);
+			} else {
+				this.imagesTl.repeat(-1);
+			}
 
-            this.imagesTl.to({}, 7, {});
-        },
+			this.images.forEach((url, i) => {
+				self.imagesTl.to(self.$.image, 0.5, {
+					opacity: 0,
+					ease: Power1.easeInOut
+				}, `+=${i * 5}`);
+				self.imagesTl.call(() => {
+					self.$.image.src = '';
+					self.$.image.src = url;
+				}, null, null);
+				self.imagesTl.to(self.$.image, 0.5, {
+					opacity: 1,
+					ease: Power1.easeInOut
+				});
+			});
 
-        /*
-         * Methods
-         */
-        show: function() {
-            var self = this;
-    //        window.lfgSound.play('ss-twitter-tweet_in');
+			this.imagesTl.to({}, 7, {});
+		},
 
-            this.tl.to(this.$.line, 0.8, {width: '100%', ease: Power3.easeInOut});
-            this.tl.to(this.$.tweetBody, 0.5, {
-  //              onStart: function() {
-  //                  if (self.images.length > 0) {
-  //                      var imageIn = window.lfgSound.play('ss-twitter-image_in');
-  //                  }
-  //              },
-                y: '0%',
-                ease: Power3.easeOut
-            });
-            this.tl.to(this.$.image, 1, {y: '0%', ease: Power3.easeOut}, '-=0.5');
-        },
+		ready() {
+			const self = this;
 
-        hide: function() {
-  //          window.lfgSound.play('ss-twitter-tweet_out');
+			tweet.on('change', newVal => {
+				if (typeof newVal !== 'object') {
+					return;
+				}
 
-//            if (this.images.length > 0) {
-//                var imageOut = window.lfgSound.play('ss-twitter-image_out');
-//            }
+				this.avatarUrl = newVal.avatarUrl;
+				this.name = newVal.name;
+				this.screenName = newVal.screenName;
+				this.images = newVal.images;
+				Polymer.dom(self.$.message).innerHTML = newVal.body;
+			});
 
-            this.tl.to(this.$.image, 1, {y: '100%', ease: Power3.easeInt});
-            this.tl.to(this.$.tweetBody, 0.5, {y: '-100%', ease: Power3.easeInt}, '-=0.88');
-            this.tl.to(this.$.line, 0.8, {width: '0%', ease: Power3.easeInOut});
-        },
+			tweetShowing.on('change', newVal => {
+				if (newVal) {
+					self.show();
+				} else {
+					self.hide();
+				}
+			});
+		},
 
-        /*
-         * Lifecycle
-         */
+		show() {
+			if (this._showing) {
+				return;
+			}
 
-        ready: function() {
-            var self = this;
+			this._showing = true;
 
-            nodecg.Replicant('tweet').on('change', function(newVal, oldVal) {
-                if (!newVal || !newVal.user) return;
+			const self = this;
+			// nodecg.playSound('tweet_in');
 
-                self.avatarUrl = newVal.user.profile_image_url;
-                self.name = newVal.user.name;
-                self.screenName = '@' + newVal.user.screen_name;
+			this.tl.to(this.$.line, 0.8, {
+				width: '100%',
+				ease: Power3.easeInOut
+			});
+			this.tl.to(this.$.tweetBody, 0.5, {
+				onStart() {
+					if (self.images.length > 0) {
+					//	nodecg.playSound('image_in');
+					}
+				},
+				y: '0%',
+				ease: Power3.easeOut
+			});
+			this.tl.to(this.$.image, 1, {
+				y: '0%',
+				ease: Power3.easeOut
+			}, '-=0.5');
+		},
 
-                var msg = newVal.text;
-                newVal.entities.user_mentions.forEach(function(mention) {
-                    msg = msg.split('@' + mention.screen_name).join(
-                        '<span class="link">' +
-                            '<s>@</s>' +
-                             mention.screen_name +
-                        '</span>'
-                    );
-                });
+		hide() {
+			if (!this._showing) {
+				return;
+			}
 
-                newVal.entities.urls.forEach(function(url) {
-                    msg = msg.split(url.url).join(
-                        '<span class="link">' + url.display_url + '</span>'
-                    );
-                });
+			this._showing = false;
 
-                newVal.entities.hashtags.forEach(function(hashtag) {
-                    if (hashtag.text.toLowerCase() === 'auzom') {
-                        msg = msg.split('#' + hashtag.text).join(
-                            '<span class="link orange">' + '#' + hashtag.text + '</span>'
-                        );
-                    } else {
-                        msg = msg.split('#' + hashtag.text).join(
-                            '<span class="link">' + '#' + hashtag.text + '</span>'
-                        );
-                    }
-                });
+		//	nodecg.playSound('tweet_out');
 
-                var images = [];
-                if (newVal.extended_entities) {
-                    newVal.extended_entities.media.forEach(function(medium) {
-                        if (medium.type === 'photo') {
-                            images.push(medium.media_url + ':large');
-                            msg = msg.split(medium.url).join('');
-                        } else {
-                            msg = msg.split(medium.media_url).join(
-                                    '<span class="link">' + medium.display_url + '</span>'
-                            );
-                        }
-                    });
-                }
-                self.images = images;
+			if (this.images.length > 0) {
+			//	nodecg.playSound('image_out');
+			}
 
-                Polymer.dom(self.$.message).innerHTML = msg.trim();
-            });
-
-            var initialized = false;
-            nodecg.Replicant('tweetShowing').on('change', function (newVal, oldVal) {
-                if (!initialized) {
-                    initialized = true;
-                    if (newVal === false) return;
-                }
-
-                if (newVal) {
-                    self.show();
-                } else {
-                    self.hide();
-                }
-            });
-        }
-    });
+			this.tl.to(this.$.image, 1, {
+				y: '100%',
+				ease: Power3.easeInt
+			});
+			this.tl.to(this.$.tweetBody, 0.5, {
+				y: '-100%',
+				ease: Power3.easeInt
+			}, '-=0.88');
+			this.tl.to(this.$.line, 0.8, {
+				width: '0%',
+				ease: Power3.easeInOut
+			});
+		}
+	});
 }, false);
 </script>

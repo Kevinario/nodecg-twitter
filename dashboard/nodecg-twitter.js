@@ -1,53 +1,59 @@
-(function() {
-    'use strict';
-    var $take = $('button[command="take"]');
-    var $show = $('button[command="show"]');
-    var $hide = $('button[command="hide"]');
-    var $pulse = $('button[command="pulse"]');
-    var $preview = $('.js-preview');
-    var $program = $('.js-program');
+(function () {
+	'use strict';
 
-    var tweet = nodecg.Replicant('tweet')
-        .on('change', function(newVal, oldVal) {
-            $program.find('.js-id').val(newVal.id);
-            $program.find('.js-content').val(newVal.text);
-        });
+	const url = document.getElementById('url');
+	const load = document.getElementById('load');
+	const show = document.getElementById('show');
+	const hide = document.getElementById('hide');
+	const seven = document.getElementById('7s');
+	const fifteen = document.getElementById('15s');
+	const thirty = document.getElementById('30s');
+	const tweetShowing = nodecg.Replicant('tweetShowing');
+	const tweetPulsing = nodecg.Replicant('tweetPulsing');
 
-    var tweetShowing = nodecg.Replicant('tweetShowing')
-        .on('change', function(newVal, oldVal) {
-            $show.prop('disabled', newVal);
-            $pulse.prop('disabled', newVal);
-            $hide.prop('disabled', !newVal);
+	tweetShowing.once('declared', () => {
+		tweetPulsing.on('change', newVal => {
+			if (tweetShowing.value && newVal) {
+				hide.setAttribute('disabled', 'true');
+			} else {
+				hide.removeAttribute('disabled');
+			}
+		});
+	});
 
-            // When this changes, disable the "take" button for a bit
-            if ($take.data('cooldownTimer')) {
-                clearTimeout($take.data('cooldownTimer'));
-            }
+	tweetShowing.on('change', newVal => {
+		if (newVal) {
+			show.setAttribute('disabled', 'true');
+			seven.setAttribute('disabled', 'true');
+			fifteen.setAttribute('disabled', 'true');
+			thirty.setAttribute('disabled', 'true');
+			hide.removeAttribute('disabled');
+		} else {
+			show.removeAttribute('disabled');
+			seven.removeAttribute('disabled');
+			fifteen.removeAttribute('disabled');
+			thirty.removeAttribute('disabled');
+			hide.setAttribute('disabled', 'true');
+		}
+	});
 
-            $take.prop('disabled', true);
-            $take.data('cooldownTimer', setTimeout(function() {
-                $take.prop('disabled', false);
-            }, 1000));
-        });
+	load.addEventListener('click', () => {
+		nodecg.sendMessage('loadTweet', url.value);
+	});
 
-    nodecg.Replicant('tweetPulsing')
-        .on('change', function(newVal, oldVal) {
-            $hide.prop('disabled', !tweetShowing.value ? true : newVal);
-        });
+	show.addEventListener('click', () => {
+		tweetShowing.value = true;
+	});
 
-    $take.click(function () {
-        nodecg.sendMessage('getTweet', $preview.find('.js-url').val());
-    });
+	hide.addEventListener('click', () => {
+		tweetShowing.value = false;
+	});
 
-    $show.click(function () {
-        tweetShowing.value = true;
-    });
+	seven.addEventListener('click', handlePulseClick);
+	fifteen.addEventListener('click', handlePulseClick);
+	thirty.addEventListener('click', handlePulseClick);
 
-    $hide.click(function () {
-        tweetShowing.value = false;
-    });
-
-    $pulse.click(function () {
-        nodecg.sendMessage('pulseTweet', $(this).data('duration'));
-    });
+	function handlePulseClick(e) {
+		nodecg.sendMessage('pulseTweet', parseInt(e.target.getAttribute('data-duration'), 10));
+	}
 })();

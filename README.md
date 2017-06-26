@@ -1,5 +1,5 @@
 # nodecg-twitter
-A standalone, 0.8.0-compatible version of the Twitter graphic from [toth3-overlay](https://github.com/TipoftheHats/toth3-overlay), which was made for [Tip of the Hats 2015](http://tipofthehats.org/).
+A standalone, 0.8.0-compatible version of the Twitter graphic from [toth4-overlay](https://github.com/TipoftheHats/toth4-overlay), which was made for [Tip of the Hats 2015](http://tipofthehats.org/).
 
 This is a [NodeCG](http://github.com/nodecg/nodecg) bundle. It cannot be run on its own, it has to be run as part of an existing NodeCG installation. Please see NodeCG's documentation for installation and setup instructions before continuing with toth3-overlay setup.
 
